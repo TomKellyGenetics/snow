@@ -38,20 +38,20 @@ checkCluster <- function(cl) {
 # Work Loop Function
 #
 
-workLoop <- function(master) {
+workLoop <- function(parent) {
     repeat tryCatch({
-        msg <- recvData(master)
+        msg <- recvData(parent)
 	cat(paste("Type:", msg$type, "\n"))
 
         if (msg$type == "DONE") {
-            closeNode(master)
+            closeNode(parent)
             break;
         }
         else if (msg$type == "EXEC") {
             success <- TRUE
             ## This uses the message, rather than the exception since
             ## the exception class/methods may not be available on the
-            ## master.
+            ## parent.
             handler <- function(e) {
                 success <<- FALSE
                 structure(conditionMessage(e),
@@ -64,7 +64,7 @@ workLoop <- function(master) {
             value <- list(type = "VALUE", value = value, success = success,
                           time = t2 - t1, tag = msg$data$tag)
             msg <- NULL ## release for GC
-            sendData(master, value)
+            sendData(parent, value)
             value <- NULL ## release for GC
         }
     }, interrupt = function(e) NULL)
@@ -127,7 +127,7 @@ initDefaultClusterOptions <- function(libname) {
             11000 + 1000 * ((stats::runif(1L) + unclass(Sys.time())/300) %% 1)
     options <- list(port = as.integer(port),
                     timeout = 60 * 60 * 24 * 30, # 30 days
-                    master =  Sys.info()["nodename"],
+                    parent =  Sys.info()["nodename"],
                     homogeneous = homogeneous,
                     type = NULL,
                     outfile = "/dev/null",

@@ -34,7 +34,7 @@ clusterMap(cl, fun, ..., MoreArgs = NULL, RECYCLE = TRUE)
 \details{
   These are the basic functions for computing on a cluster.  All
   evaluations on the worker nodes are done using \code{tryCatch}.
-  Currently an error is signaled on the master if any one of the nodes
+  Currently an error is signaled on the parent if any one of the nodes
   produces an error.  More sophisticated approaches will be considered
   in the future.
 
@@ -70,9 +70,9 @@ clusterMap(cl, fun, ..., MoreArgs = NULL, RECYCLE = TRUE)
   the shortest argument.  Cluster nodes are recycled if the length of
   the result is greater than the number of nodes.
   
-  \code{clusterExport} assigns the values on the master of the variables
+  \code{clusterExport} assigns the values on the parent of the variables
   named in \code{list} to variables of the same names in the global
-  environments of each node.  The environment on the master from which
+  environments of each node.  The environment on the parent from which
   variables are exported defaults to the global environment.
 
   \code{clusterSplit} splits \code{seq} into one consecutive piece for

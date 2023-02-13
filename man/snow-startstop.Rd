@@ -83,7 +83,7 @@ getMPIcluster()
   specify that the startup procedure for inhomogeneous clusters is to
   be used; this requires some additional configuration. The default
   setting is \code{TRUE} unless the environment variable
-  \code{R_SNOW_LIB} is defined on the master host with a non-empty
+  \code{R_SNOW_LIB} is defined on the parent host with a non-empty
   value.
 
   The option\code{outfile} can be used to specify the file to which
@@ -91,7 +91,7 @@ getMPIcluster()
   during debugging of an installation it can be useful to set this to a
   proper file.  On some systems setting \code{outfile} to \code{""} or
   to \code{/dev/tty} will result in worker output being sent tothe
-  terminal running the master process.
+  terminal running the parent process.
 
   The functions \code{makeSOCKcluster}, %% \code{makePVMcluster},
   %% \code{makeNWScluster},
@@ -99,7 +99,7 @@ getMPIcluster()
   a cluster of the corresponding type.
 
   In MPI configurations where process spawning is not available and
-  something like \code{mpirun} is used to start a master and a set of workers
+  something like \code{mpirun} is used to start a parent and a set of workers
   the corresponding cluster will have been pre-constructed and can be obtained
   with \code{getMPIcluster}.  It is also possible to obtain a reference
   to the running cluster using \code{makeCluster} or
@@ -111,7 +111,7 @@ getMPIcluster()
   For SOCK
   %% and NWS
   clusters the option \code{manual = TRUE} forces a
-  manual startup mode in which the master prints the command to be run
+  manual startup mode in which the parent prints the command to be run
   manually to start a worker process. Together with setting the
   \code{outfile} option this can be useful for debugging cluster startup.
 

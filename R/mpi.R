@@ -6,7 +6,7 @@ newMPInode <- function(rank, comm)
     structure(list(rank = rank, RECVTAG = 33, SENDTAG = 22, comm = comm),
               class = "MPInode")
 
-makeMPImaster <- function(comm = 0)
+makeMPIparent <- function(comm = 0)
     structure(list(rank = 0, RECVTAG = 22, SENDTAG = 33, comm = comm),
               class = "MPInode")
 
@@ -100,13 +100,13 @@ makeMPIcluster <- function(count, ..., options = defaultClusterOptions) {
             }
             mpitask <- "/usr/bin/env"
         }
-        count <- Rmpi::mpi.comm.spawn(slave = mpitask, slavearg = args,
-                                      nslaves = count, intercomm = intercomm)
+        count <- Rmpi::mpi.comm.spawn(child = mpitask, childarg = args,
+                                      nchildren = count, intercomm = intercomm)
         if (Rmpi::mpi.intercomm.merge(intercomm, 0, comm)) {
             Rmpi::mpi.comm.set.errhandler(comm)
             Rmpi::mpi.comm.disconnect(intercomm)
         }
-        else stop("Failed to merge the comm for master and workers.")
+        else stop("Failed to merge the comm for parent and workers.")
         cl <- vector("list",count)
         for (i in seq(along=cl))
             cl[[i]] <- newMPInode(i, comm)
@@ -124,7 +124,7 @@ runMPIworker <- function() {
     Rmpi::mpi.comm.set.errhandler(comm)
     Rmpi::mpi.comm.disconnect(intercomm)
 
-    workLoop(makeMPImaster(comm))
+    workLoop(makeMPIparent(comm))
 
     Rmpi::mpi.comm.disconnect(comm)
     Rmpi::mpi.quit()
@@ -143,5 +143,5 @@ stopCluster.spawnedMPIcluster <- function(cl) {
 
 #**** figure out how to get Rmpi::mpi.quit called (similar issue for pvm?)
 #**** fix things so stopCluster works in both versions.
-#**** need .Last to make sure cluster is shut down on exit of master
+#**** need .Last to make sure cluster is shut down on exit of parent
 #**** figure out why the workers busy wait under mpirun
