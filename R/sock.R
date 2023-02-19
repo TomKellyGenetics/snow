@@ -14,8 +14,8 @@ newSOCKnode <- function(machine = "localhost", ...,
         machine <- machine$host
     }
     outfile <- getClusterOption("outfile", options)
-    if (machine == "localhost") parent <- "localhost"
-    else parent <- getClusterOption("parent", options)
+    if (machine == "localhost") manager <- "localhost"
+    else manager <- getClusterOption("manager", options)
     port <- getClusterOption("port", options)
     manual <- getClusterOption("manual", options)
 
@@ -26,7 +26,7 @@ newSOCKnode <- function(machine = "localhost", ...,
             rscript <- shQuoteIfNeeded(getClusterOption("rscript", options))
             snowlib <- getClusterOption("snowlib", options)
             script <- shQuoteIfNeeded(file.path(snowlib, "snow", "RSOCKnode.R"))
-            env <- paste("MASTER=", parent,
+            env <- paste("MASTER=", manager,
                          " PORT=", port,
                          " OUT=", outfile,
                          " SNOWLIB=", snowlib, sep="")
@@ -34,7 +34,7 @@ newSOCKnode <- function(machine = "localhost", ...,
         }
         else {
             script <- "RunSnowWorker RSOCKnode.R"
-            env <- paste("MASTER=", parent,
+            env <- paste("MASTER=", manager,
                          " PORT=", port,
                          " OUT=", outfile, sep="")
             cmd <- paste(script, env)
@@ -46,7 +46,7 @@ newSOCKnode <- function(machine = "localhost", ...,
             script <- shQuoteIfNeeded(file.path(scriptdir, "RSOCKnode.sh"))
             rlibs <- paste(getClusterOption("rlibs", options), collapse = ":")
             rprog <- shQuoteIfNeeded(getClusterOption("rprog", options))
-            env <- paste("MASTER=", parent,
+            env <- paste("MASTER=", manager,
                          " PORT=", port,
                          " OUT=", outfile,
                          " RPROG=", rprog,
@@ -54,7 +54,7 @@ newSOCKnode <- function(machine = "localhost", ...,
         }
         else {
             script <- "RunSnowNode RSOCKnode.sh"
-            env <- paste("MASTER=", parent,
+            env <- paste("MASTER=", manager,
                          " PORT=", port,
                          " OUT=", outfile, sep="")
         }
@@ -96,7 +96,7 @@ newSOCKnode <- function(machine = "localhost", ...,
     structure(list(con = con, host = machine, rank = rank), class = "SOCKnode")
 }
 
-makeSOCKparent <- function(parent = Sys.getenv("MASTER"),
+makeSOCKmanager <- function(manager = Sys.getenv("MASTER"),
                            port = Sys.getenv("PORT")) {
     port <- as.integer(port)
     timeout <- getClusterOption("timeout")
@@ -106,11 +106,11 @@ makeSOCKparent <- function(parent = Sys.getenv("MASTER"),
     retryScale <- 1.5     # 50% increase of delay at each retry
     setup_timeout <- 120  # retry setup for 2 minutes before failing
      
-    ## Retry multiple times in case the parent is not yet ready
+    ## Retry multiple times in case the manager is not yet ready
     t0 <- Sys.time()
     repeat {
         con <- tryCatch({
-            socketConnection(parent, port = port, blocking = TRUE,
+            socketConnection(manager, port = port, blocking = TRUE,
                              open = "a+b", timeout = timeout)
         }, error = identity, warning = identity)
         if (inherits(con, "connection")) break

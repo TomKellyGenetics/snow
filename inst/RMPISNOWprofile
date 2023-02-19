@@ -7,7 +7,7 @@ assign(".MPIrun", function()
         sys.load.image(".RData",TRUE)
         .First.sys()
 	sink(file="/dev/null")
-        workLoop(makeMPIparent())
+        workLoop(makeMPImanager())
         mpi.quit()
     }
     else {

@@ -38,20 +38,20 @@ checkCluster <- function(cl) {
 # Work Loop Function
 #
 
-workLoop <- function(parent) {
+workLoop <- function(manager) {
     repeat tryCatch({
-        msg <- recvData(parent)
+        msg <- recvData(manager)
 	cat(paste("Type:", msg$type, "\n"))
 
         if (msg$type == "DONE") {
-            closeNode(parent)
+            closeNode(manager)
             break;
         }
         else if (msg$type == "EXEC") {
             success <- TRUE
             ## This uses the message, rather than the exception since
             ## the exception class/methods may not be available on the
-            ## parent.
+            ## manager.
             handler <- function(e) {
                 success <<- FALSE
                 structure(conditionMessage(e),
@@ -64,7 +64,7 @@ workLoop <- function(parent) {
             value <- list(type = "VALUE", value = value, success = success,
                           time = t2 - t1, tag = msg$data$tag)
             msg <- NULL ## release for GC
-            sendData(parent, value)
+            sendData(manager, value)
             value <- NULL ## release for GC
         }
     }, interrupt = function(e) NULL)
@@ -127,7 +127,7 @@ initDefaultClusterOptions <- function(libname) {
             11000 + 1000 * ((stats::runif(1L) + unclass(Sys.time())/300) %% 1)
     options <- list(port = as.integer(port),
                     timeout = 60 * 60 * 24 * 30, # 30 days
-                    parent =  Sys.info()["nodename"],
+                    manager =  Sys.info()["nodename"],
                     homogeneous = homogeneous,
                     type = NULL,
                     outfile = "/dev/null",
@@ -146,7 +146,7 @@ initDefaultClusterOptions <- function(libname) {
 
 addClusterOptions <- function(options, new) {
     if (! is.null(new)) {
-        options <- new.env(parent = options)
+        options <- new.env(manager = options)
         names <- names(new)
         for (i in seq(along = new))
             assign(names[i], new[[i]], envir = options)

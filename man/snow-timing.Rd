@@ -27,12 +27,12 @@ snow.time(expr)
   object of class \code{snowTimingData}; details of the return
   value are subject to change.  The \code{print} method for
   \code{snowTimingData} objects shows the total elapsed time, the total
-  communication time between parent and worker nodes, and the compute
+  communication time between manager and worker nodes, and the compute
   time on each worker node.  The \code{plot}, motivated by the display
   produced by \code{xpvm}, produces a Gantt chart of the computation, with
   green rectangles representing active computation, blue horizontal lines
   representing a worker waiting to return a result, and red lines
-  representing parent/worker communications.  
+  representing manager/worker communications.  
 }
 \examples{
   \dontrun{

@@ -1,5 +1,5 @@
 local({
-    parent <- "localhost"
+    manager <- "localhost"
     port <- ""
     snowlib <- Sys.getenv("R_SNOW_LIB")
     outfile <- Sys.getenv("R_SNOW_OUTFILE") ##**** defaults to ""; document
@@ -12,7 +12,7 @@ local({
         name <- substr(a, 1, pos - 1)
         value <- substr(a,pos + 1, nchar(a))
         switch(name,
-               MASTER = parent <- value,
+               MASTER = manager <- value,
                PORT = port <- value,
                SNOWLIB = snowlib <- value,
                OUT = outfile <- value)
@@ -26,6 +26,6 @@ local({
     if (port == "") port <- getClusterOption("port")
 
     sinkWorkerOutput(outfile)
-    cat("starting worker for", paste(parent, port, sep = ":"), "\n")
-    workLoop(makeSOCKparent(parent, port))
+    cat("starting worker for", paste(manager, port, sep = ":"), "\n")
+    workLoop(makeSOCKmanager(manager, port))
 })

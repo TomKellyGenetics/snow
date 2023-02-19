@@ -11,22 +11,22 @@
 \alias{workLoop}
 \alias{sinkWorkerOutput}
 \alias{newSOCKnode}
-\alias{makeSOCKparent}
+\alias{makeSOCKmanager}
 \alias{closeNode.SOCKnode}
 \alias{sendData.SOCKnode}
 \alias{recvData.SOCKnode}
 %% \alias{newPVMnode}
-%% \alias{makePVMparent}
+%% \alias{makePVMmanager}
 %% \alias{closeNode.PVMnode}
 %% \alias{sendData.PVMnode}
 %% \alias{recvData.PVMnode}
 \alias{newMPInode}
-\alias{makeMPIparent}
+\alias{makeMPImanager}
 \alias{closeNode.MPInode}
 \alias{sendData.MPInode}
 \alias{recvData.MPInode}
 %% \alias{newNWSnode}
-%% \alias{makeNWSparent}
+%% \alias{makeNWSmanager}
 %% \alias{closeNode.NWSnode}
 %% \alias{sendData.NWSnode}
 %% \alias{recvData.NWSnode}
@@ -70,24 +70,24 @@ addClusterOptions(options, new)
 initDefaultClusterOptions(libname)
 
 docall(fun, args)
-workLoop(parent)
+workLoop(manager)
 sinkWorkerOutput(outfile)
 
 newSOCKnode(machine = "localhost", ..., options = defaultClusterOptions, rank)
-makeSOCKparent(parent = Sys.getenv("MASTER"), port = Sys.getenv("PORT"))
+makeSOCKmanager(manager = Sys.getenv("MASTER"), port = Sys.getenv("PORT"))
 \method{closeNode}{SOCKnode}(node)
 \method{sendData}{SOCKnode}(node, data)
 \method{recvData}{SOCKnode}(node)
 
 %% newPVMnode(where = "", options = defaultClusterOptions, rank)
-%% makePVMparent()
+%% makePVMmanager()
 %% \method{sendData}{PVMnode}(node, data)
 %% \method{recvData}{PVMnode}(node)
 
 setMPIcluster(new)
 runMPIworker()
 newMPInode(rank, comm)
-makeMPIparent(comm)
+makeMPImanager(comm)
 \method{sendData}{MPInode}(node, data)
 \method{recvData}{MPInode}(node)
 

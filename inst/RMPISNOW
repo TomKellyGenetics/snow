@@ -14,7 +14,7 @@ R_PROFILE=${snowdir}/snow/RMPISNOWprofile; export R_PROFILE
 
 if test ! -z "${LAMRANK}" ; then
     # use the LAMRANK environment variable set by LAM-MPI's mpirun to
-    # run R with appropriate arguments for parent and workers.
+    # run R with appropriate arguments for manager and workers.
     if test "${LAMRANK}" -eq 0 ; then
 	exec R $*
     else
@@ -30,7 +30,7 @@ elif test ! -z "${MV2_COMM_WORLD_RANK}" ; then
 elif test ! -z "${OMPI_MCA_ns_nds_vpid}" ; then
     # Similar approach for OpenMPI using the OMPI_MCA_ns_nds_vpid
     # variable.  This is for backward compatibility with pre-1.3
-    # versions.  The parent R process thinks it is non-interactive so
+    # versions.  The manager R process thinks it is non-interactive so
     # for now --no-save or something like that is needed.
     if test "${OMPI_MCA_ns_nds_vpid}" -eq 0 ; then
 	exec R --no-save $*
@@ -40,7 +40,7 @@ elif test ! -z "${OMPI_MCA_ns_nds_vpid}" ; then
 elif test ! -z "${OMPI_COMM_WORLD_RANK}" ; then
     # Similar approach for OpenMPI using the OMPI_COMM_WORLD_RANK
     # variable.  This is the correct variable to use as of v1.3+.  The
-    # parent R process thinks it is non-interactive so for now
+    # manager R process thinks it is non-interactive so for now
     # --no-save or something like that is needed.
     if test "${OMPI_COMM_WORLD_RANK}" -eq 0 ; then
 	exec R --no-save $*
@@ -48,7 +48,7 @@ elif test ! -z "${OMPI_COMM_WORLD_RANK}" ; then
 	exec R --no-echo > /dev/null 2>&1
     fi
 else 
-    # The fallback is to use the same arguments on parent and workers,
+    # The fallback is to use the same arguments on manager and workers,
     # with --no-save for cases where workers don't have a terminal.
     # This means that things like CMD batch won't work. It seems to be
     # important NOT to use exec here, at least when this code runs under LAM.
